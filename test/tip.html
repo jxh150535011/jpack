@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../j.js"></script>
+<script type="text/javascript" src="pretty.js"></script>
+<style type="text/css">
+</style>
+</head>
+<body>
+<div data-code="example1">
+	<h1>tip:提示层</h1>
+<div>
+<div data-code-source="html">
+<a id="tip1" href="javascript:void(0);"  data-plug-tip-dir='right'>鼠标悬浮显示</a>&nbsp;
+<a href="javascript:void(0);" data-plug='jtip' data-plug-tip-dir='bottom'>鼠标悬浮显示(靠下)</a>&nbsp;
+<a href="javascript:void(0);" data-plug='tip' data-plug-tip-dir='bottom'>自定义弹出层</a>&nbsp;
+</div>
+html:
+<pre data-code-print='html' class="prettyprint lang-html" style="">
+</pre>
+js:
+<pre data-code-print='js' class="prettyprint" style="">
+</pre>
+</div>
+
+<script type="text/javascript" data-code-source="js">
+J.require("dialog?style=green");
+J.ready(function(){
+
+	//oheight 代表 目标对象高 height 表示弹出层 高
+	$("#tip1").hover(function(){
+		$(this).jtip({dir:"right",top:"top-height/2+oheight/2",tipTemp:"<div style='width:200px;height:50px;'>弹出了</div>"},"show");//必须调用 show 不然不显示
+	},function(){
+		$(this).jtip("close");
+	});
+
+	$("[data-plug='jtip']").hover(function(){
+		var dir=$(this).attr("data-plug-tip-dir")||"right";
+		$(this).jtip({dir:dir,tipTemp:"<div style='width:200px;height:50px;'>弹出了</div>"},"show");//必须调用 show 不然不显示
+	},function(){
+		$(this).jtip("close");
+	});
+
+	$("[data-plug='tip']").hover(function(){
+		var dir=$(this).attr("data-plug-tip-dir")||"right";
+		$(this).tip({dir:dir,tipTemp:"<div style='width:200px;height:50px;background:blue;'>弹出了</div>"},"show");//必须调用 show 不然不显示
+	},function(){
+		$(this).tip("close");
+	});
+});
+
+</script>
+</div>
+
+</body>
+
+
+
+</script>
+</body>
+</html>

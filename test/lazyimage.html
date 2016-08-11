@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../j.js"></script>
+<script type="text/javascript" src="pretty.js"></script>
+<style type="text/css">
+.red{background: red;}
+.blue{background: blue;}
+.yellow{background: yellow;}
+.gray{background: gray;}
+.green{background: green;}
+.black{background: black;}
+</style>
+</head>
+<body>
+<div data-code="example1">
+<div>
+<div  data-code-source="html">
+<a href="javascript:load1();">启动区域加载</a>&nbsp;
+<a href="javascript:load2();">启动全局加载</a>&nbsp;
+
+<div id="content1" style="width:800px;height:600px;display:block;overflow:auto;">
+<img src="" data-src="http://jpack.sinaapp.com/test/image2.jpg" data-lazy-disabled="diabled" height="300">
+<br/><br/><br/><br/>
+<img src="" data-src="http://jpack.sinaapp.com/test/image4.jpg"  data-lazy-disabled="diabled"><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/>
+<div data-class="black" style="width:400px;height:400px;display:block;" data-lazy-disabled="diabled"></div>
+</div>
+
+<img src="" data-src="http://jpack.sinaapp.com/test/image3.jpg">
+<img src="" data-src="http://jpack.sinaapp.com/test/image1.jpg" style="margin-left:700px;">
+<br/><br/>
+<br/>
+<div src="" data-src="http://jpack.sinaapp.com/test/image1.jpg"></div>
+
+
+</div>
+html:
+<pre data-code-print='html' class="prettyprint lang-html" style="">
+</pre>
+js:
+<pre data-code-print='js' class="prettyprint" style="">
+</pre>
+</div>
+
+<script type="text/javascript" data-code-source="js">
+J.require("jquery");
+J.require("/plugins/basic/j.lazy.js");
+J.ready(function (argument) {
+	
+});
+function load1(){
+	$("#content1").find("[data-lazy-disabled]").attr("data-lazy-disabled","");
+	$("#content1").lazy({parent:"#content1"});//相对自己加载
+}
+function load2(){
+	$(document).lazy({});
+}
+</script>
+</div>
+
+</body>
+</html>

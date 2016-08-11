@@ -1,0 +1,134 @@
+.grid{}
+.grid table { 
+border-collapse:collapse; 
+border-spacing:0; 
+width:100%;
+margin-bottom:-1px;
+border:1px solid #C4D6E6;
+}
+.grid th{
+	text-align:center;
+	color:#333;
+	font-weight:700;
+	background: #FFF;
+	height: 30px;
+	border:1px solid #C4D6E6;
+}
+.grid td{
+	height:20px;
+	line-height:20px;
+	text-align:center;
+	background-color:#fff;
+	border:1px solid #C4D6E6;
+	overflow: hidden;
+}
+.grid .even td{background-color:#DEECF1;}
+.grid .hover td{color:#960;background-color:#FFE9D0;}
+
+.grid .cell{margin: 0;padding:2px 4px;
+/*-moz-transition:all 0.3s ease;
+-webkit-transition:all 0.3s ease;*/
+/*-webkit-transition:all .25s linear;*/
+}
+.grid .even .cell{}
+.grid .hover .cell{
+	/*-moz-transform:scale(1.3);
+	-webkit-transform:scale(1.3);*/
+	/*-webkit-transform:rotate(5deg);*/
+}
+
+.grid a{
+	color:#069;
+}
+.grid a:hover{
+	color:#F60;
+	text-decoration:underline;
+}
+
+.grid .error{
+	height: 30px;font-weight: bolder;font-size: 14px;padding: 5px;
+}
+/*
+	-ms-
+	-o-
+	-moz-
+	-webkit-transition:color .25s linear,background-color .25s linear,border-color .25s linear,padding-left .25s linear;
+	transition:color .25s linear,background-color .25s linear,border-color .25s linear,padding-left .25s linear;
+
+::selection {background:#C2300B;color:#fff;}
+::-moz-selection {background:#C2300B;color:#fff;}
+::-webkit-selection {background:#C2300B;color:#fff;}
+	*/
+.btn.primary {
+color: #fff;
+background-color: #0064cd;
+background-repeat: repeat-x;
+background-image: -khtml-gradient(linear,left top,left bottom,from(#049cdb),to(#0064cd));
+background-image: -moz-linear-gradient(top,#049cdb,#0064cd);
+background-image: -ms-linear-gradient(top,#049cdb,#0064cd);
+background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0%,#049cdb),color-stop(100%,#0064cd));
+background-image: -webkit-linear-gradient(top,#049cdb,#0064cd);
+background-image: -o-linear-gradient(top,#049cdb,#0064cd);
+background-image: linear-gradient(top,#049cdb,#0064cd);
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#049cdb',endColorstr='#0064cd',GradientType=0);
+text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
+border-color: #0064cd #0064cd #003f81;
+border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+}
+
+
+.pager-default{
+	overflow:hidden;
+	height:22px;
+	padding:10px 0;
+	border:1px solid #C4D6E6;
+	background:url(default/flip-bg.png) repeat-x;
+}
+.pager-default .pager p{
+	float:right;
+	padding-right:12px;
+}
+.pager-default .pager a{
+	float:left;
+	height:20px;
+	line-height:20px;
+	color:#4D6680;
+	cursor:pointer;
+	margin:0 2px;
+	padding:0 6px;
+	border:1px solid #AFBFCF;
+	background:url(default/flip.png) repeat-x;
+}
+.pager-default .pager a.on, .pager-default .pager a:hover{
+	color:#FFF;
+	text-decoration:none;
+	border-color:#34414B;
+	background-position:0 -20px;
+}
+.pager-default .pager span{
+	float:left;
+	line-height:22px;
+	color:#999;
+}
+.pager-default .pager .info{
+	float:left;
+	line-height:22px;
+	padding-left:12px;
+}
+.pager-default .pager .info b{
+	color:#069;
+	font-weight:normal;
+	padding:0 2px;
+}
+.pager-default .pager .gray,.pager-default .pager .gray:hover{
+	color:#96A6BE;
+	cursor:default;
+	border:1px solid #AFBFCF;
+	background:url(default/flip.png) repeat-x;
+}
+.pager-default .pager select{
+	float:left;
+	height:22px;
+	color:#404040;
+	border:1px solid #CCC;
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../j.js"></script>
+<script type="text/javascript" src="pretty.js"></script>
+<style type="text/css">
+.model{font-size: 12px;}
+.gray{color: gray;font-size: 12px;}
+</style>
+</head>
+<body>
+<div data-code="example1">
+	<h1>upload:上传暂时做html5</h1>
+	<h3>例子1：</h3>
+	<div>
+	<h4>运行结果</h4>
+	
+	<div  data-code-source="html">
+	<div id="model1" class="model"></div>
+
+<input type='file' name='myImg'/><br/>
+<form id="form1">
+    <input  id='btn' type="button" value="提交" />
+</form>  
+
+	</div>
+	</div>
+	html:
+	<pre data-code-print='html' class="prettyprint lang-html" style="">
+	</pre>
+	js:
+	<pre data-code-print='js' class="prettyprint" style="">
+	</pre>
+	
+	<script type="text/javascript" data-code-source="js">
+	J.require("uploader");
+	J.ready(function(){
+		$("#model1").uploader({
+			url:"http://127.0.0.1:81/PHPTools/test/upload/service.php",
+			file_types:"*.gif;*.jpg;*.jpeg;*.png;",
+			file_post_name:"upfile",//默认请求名
+			//file_post_data:{},
+			onselectfile:function(obj){
+				console.log(obj);
+			},
+			render:function(){
+
+			},
+			wait:function(){
+				return "等待中...";
+			},
+			onloadstart:function(){
+			},
+			onloadend:function(){
+			},
+			onprogress:function(percent){
+
+			}
+		});
+		$("#model1").uploader("add");
+
+		$("#btn").click(function(){
+			var oxhr = new XMLHttpRequest();
+			var fd=new FormData($("#form1").get(0));
+			fd.append("file1",$(this).get(0))
+			oxhr.open("POST", "http://127.0.0.1:81/PHPTools/test/upload/service.php");
+			oxhr.send(fd);
+			return false;
+		});
+
+	});
+	</script>
+</div>
+</body>
+</html>

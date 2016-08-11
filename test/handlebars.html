@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../j.js"></script>
+<script type="text/javascript" src="pretty.js"></script>
+<script type="text/javascript" src="../jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="../handlebars.js"></script>
+<style type="text/css">
+.model{font-size: 12px;}
+.gray{color: gray;font-size: 12px;}
+</style>
+</head>
+<body>
+<div data-code="example1">
+	<h1>handlebars:模板</h1>
+	<h3>例子1：常用的一些方式(set方式还是挺好用的 就是可读性差了点)</h3>
+	<div>
+	<h4>运行结果</h4>
+	<div id="model1" class="model"></div>
+	<div  data-code-source="html">
+	<script id="template1" type="text/x-handlebars-template">
+
+		{{#with scort}}
+		{{#with other}}
+		{{#if s}}
+		<p>if的层级判断,s的值为:{{s}},if也是嵌套的一级，只不过对象跟上级other是同一个,所以访问语文成绩为{{../../chinese}}</p>
+		{{/if}}
+		{{/with}}
+		{{/with}}
+		<p><span class="gray">支持括号\{\{：</span>{{title}}</p>
+		<p><span class="gray">支持三括号:html{\{\{：</span>{{{body}}}</p>
+		<p><span class="gray">set方法1：</span>{{#set "params1"}}a{{/set}}当前保存的值是：{{params1}}</p>
+		<p><span class="gray">set方法2[指定参数列表]：</span>
+		{{#set "params2" "function" "_title"}}
+		return "<font color='red'>"+_title+"</font>"+this.author+"。";
+		{{/set}}
+		执行方法结果：{{params2 "作者为:"}}
+		</p>
+		<p><span class="gray">执行对象方法：</span>平均分为：{{avg}}
+		<p><span class="gray">这是一个bug：</span>{{title--}}</p>
+		<p><span class="gray">for循环：</span>(@parent引用上级循环的data)</p>
+		{{#for 0 this.childs.number 1}}
+		{{#equal @index 0}}
+		有一下节点：
+		{{/equal}}
+		<span class="gray">索引：{{add @index 1}}</span>
+		{{/for}}
+	</script>
+	</div>
+	</div>
+	html:
+	<pre data-code-print='html' class="prettyprint lang-html" style="">
+	</pre>
+	js:
+	<pre data-code-print='js' class="prettyprint" style="">
+	</pre>
+	
+	<script type="text/javascript" data-code-source="js">
+	$(document).ready(function(){
+		var context={
+			title:"这是一个标题",
+			"title--":"title--:原意是匹配 注释内容",
+			body:"<a href='javascript:;'>这是一段html嵌入</a>",
+			func:function(a){return "方法返回[参数："+a+",对象值:"+this.scort.chinese+"]";},
+			avg:function(){
+				return (this.scort.chinese+this.scort.english+this.scort.math)/3;
+			},
+			list:["list1","list2","list3"],
+			scort:{chinese:100,"chinese--":99,english:90,math:80,other:{s:1}},
+			author:"test0",
+			childs:{number:4}
+		};
+		$("#model1").html(Handlebars.compile($("#template1").html(),{noEscape:true})(context));//noEscape 对于非简单输出{{name}} 不采用编码，简单输出 默认不采用编码方式
+	});
+
+	</script>
+</div>
+<div data-code="example2">
+	<div>
+	<h3>例子2：进行运算方式(需要修改部分源码,同时表达式无法很好支持 特殊字符变量，因为它们是无效的命名 所以访问此类变量 可考虑this["@key"]等方式)</h3>
+	<div id="model2" class="model"></div>
+	<div  data-code-source="html">
+	<script id="template2" type="text/x-handlebars-template">
+		"()"<span class="gray">为表达式的开始结束，表达式内的需要使用括号 需要转义 </span>
+		<p><span class="gray">表达式1：</span>{{("作者："+author+",他的平均分为："+avg.call\(this\))}}</p>
+		<span class="gray">可支持的逻辑运算 </span>
+		<p>大于等于90分的成绩有</p>
+		{{#each scort}}
+		{{#if (this>=90)}}
+		<p>{{(this["@key"]==="chinese"?"语文":"")}}{{(this["@key"]==="english"?"英语":"")}}{{(this["@key"]==="math"?"数学":"")}}</p>
+		{{/if}}
+		{{/each}}
+	</script>
+	</div>
+	</div>
+	html:
+	<pre data-code-print='html' class="prettyprint lang-html" style="">
+	</pre>
+	js:
+	<pre data-code-print='js' class="prettyprint" style="">
+	</pre>
+	
+	<script type="text/javascript" data-code-source="js">
+	$(document).ready(function(){
+		var context={
+			title:"这是一个标题",
+			avg:function(){
+				return (this.scort.chinese+this.scort.english+this.scort.math)/3;
+			},
+			list:["list1","list2","list3"],
+			scort:{chinese:100,english:90,math:80},
+			author:"test1"
+		};
+		$("#model2").html(Handlebars.compile($("#template2").html())(context));
+	});
+
+	</script>
+
+</div>
+<div data-code="example3">
+	<h3>例子3：上述用到的一些方法</h3>
+	js:
+	<pre data-code-print='js' class="prettyprint" style="">
+	</pre>
+	<script type="text/javascript" data-code-source="js">
+	var secrecyKey="break|delete|function|return|typeof|case|do|if|switch|var|catch|else|in|this|void|continue|false|instanceof|throw|while|debugger|finally|new|true|with|default|for|null|try|abstract|double|goto|native|static|boolean|enum|implements|package|super|byte|export|import|private|synchronized|char|extends|int|protected|throws|class|final|interface|public|transient|const|float|long|short|volatile";
+    Handlebars.registerHelper('equal', function(a, b,options) {//表示是否相等
+        if(a==b) {
+            return options.fn(this);
+        } else {
+            return options.inverse(this);
+        }
+    });
+    Handlebars.registerHelper('gt', function(a, b,equal,options) {//第3个参数 表示计入相等
+        if(a>b||(options&&equal&&a==b)) {
+            return (options||equal).fn(this);
+        } else {
+            return (options||equal).inverse(this);
+        }
+    });
+    Handlebars.registerHelper('lt', function(a, b,equal,options) {
+        if(a<b||(options&&equal&&a==b)) {
+            return (options||equal).fn(this);
+        } else {
+            return (options||equal).inverse(this);
+        }
+    });
+    Handlebars.registerHelper('for', function(a,b,c,options) {
+        if(!options){
+            options=c;
+            c=1;
+        }
+        var _data={"parent":options.data};
+        var ret="";
+        for(var i=a;i<b;i+=c){
+            _data.index=i;
+            ret+=options.fn(this,{data:_data})
+        }
+        return ret;
+    });
+    Handlebars.registerHelper('add', function(options) {
+        var len=arguments.length-1;
+        if(len<1)return null;
+        var str=arguments[0];
+        for(var i=1;i<len;i++)str+=arguments[i];
+        return str;
+    });
+    Handlebars.registerHelper('set', function(name,type) {//将结果集 填充回 this对象回去
+        options=arguments[arguments.length-1];
+        this[name]=options.fn(this,{data:options.data});
+        this[name]&&(this[name]=this[name].replace(/^[\s]*|[\s]*$/gi,""));
+        if(type&&this[name]){
+            if(type=="number")this[name]=parseFloat(this[name]);
+            else if(type=="expression"||type=="function"){
+                var names=[],values=[];
+                for(var k in this){
+                    if(!/^([a-zA-Z_$]+[a-zA-Z_0-9$]*)$/g.test(k)||new RegExp("^("+secrecyKey+")$","gi").test(k)||!this.hasOwnProperty(k))continue;
+                    names.push(k);
+                    values.push(this[k]);
+                }
+                if(type=="expression"){
+                    names.push(this[name]);
+                }
+                else{//function
+                    var fnames=arguments.length<4?[]:[].slice.call(arguments,2,arguments.length-1);//当前方法需要的参数
+                    names.push("return function("+fnames.join(",")+"){"+this[name]+"}");
+                }
+                this[name]=Function.apply(this,names).apply(this,values);//Function本身产生的就是一个方法 并不执行内部return
+            }
+        }
+    });
+	</script>
+</div>
+</body>
+</html>

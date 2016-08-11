@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<script type="text/javascript" src="../j.js"></script>
+</head>
+<body>
+
+
+<div>
+<div id="abcedf">
+
+	<div id="abc1" lazy-src="http://127.0.0.1:81/furn/images/test/01.jpg" style='width:300px;height:300px;'>
+		
+	</div>
+
+	<div >
+		<img  id="abc" lazy-src="http://127.0.0.1:81/furn/images/test/02.jpg" style='width:800px;height:600px;' >
+	</div>
+
+	<br/>
+		<img lazy-src="http://127.0.0.1:81/furn/images/test/02.jpg" data-plug='image' style='width:200px;height:300px;'>
+	<br/>
+<img lazy-src="http://127.0.0.1:81/furn/images/test/03.jpg">
+	<br/>
+<img lazy-src="http://127.0.0.1:81/furn/images/test/04.jpg">
+</div>
+
+<div id="abcedf2">
+
+	<div id="abc1" lazy-src="http://127.0.0.1:81/furn/images/test/01.jpg" style='width:300px;height:300px;'>
+		
+	</div>
+
+	<div >
+		<img  id="abc" lazy-src="http://127.0.0.1:81/furn/images/test/02.jpg" style='width:800px;height:600px;' >
+	</div>
+
+	<br/>
+		<img lazy-src="http://127.0.0.1:81/furn/images/test/02.jpg" data-plug='image' style='width:200px;height:300px;'>
+	<br/>
+<img lazy-src="http://127.0.0.1:81/furn/images/test/03.jpg">
+	<br/>
+<img lazy-src="http://127.0.0.1:81/furn/images/test/04.jpg">
+</div>
+</div>
+
+	<br/>
+<script type="text/javascript">
+J.require("image",function(argument) {
+	//$("#abc").image({width:300,height:200,cliptype:"filler"},"show");
+	//$("#abc1").image({cliptype:"filler"},"show");
+	$("#abcedf").lazyimages("load");
+	$("#abcedf2").lazyimages("load");
+});
+J.ready(function(){
+
+});
+</script>
+</body>
+</html>

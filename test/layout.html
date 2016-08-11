@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../j.js"></script>
+<script type="text/javascript" src="pretty.js"></script>
+<style type="text/css">
+.red{background: red;}
+.blue{background: blue;}
+.yellow{background: yellow;}
+.gray{background: gray;}
+.green{background: green;}
+.black{background: black;}
+</style>
+</head>
+<body>
+<div data-code="example1">
+	<h1>layout:页面布局插件</h1>
+	<h3>例子1：一个简单的布局ui</h3>
+<div>
+<div style="display:block;width:600px;height:200px;"  data-code-source="html">
+<!-- 如内部为空，请加"&nbsp;" 不然不显示。红色表示可拖拽-->
+<!-- 1,data-width data-minwidth data-maxiwdth  其中值width ,height 均相对于父级(height 同理) -->
+<!-- 2,data-width 可不进行设值  如果是row类型等于'width'(就是父级宽度) 否则进行平均分,height 同理可得 根据column来判定-->
+<div id="example1" data-height="200" data-width="600" style="display:none;">
+	<div class="black" data-plug-layout="row" data-height="20" >&nbsp;</div>
+	<div class="red" data-plug-layout="row" data-height="5" data-bar=1 >&nbsp;</div><!-- 可拖拽-->
+	<div data-plug-layout="row" data-height="height-50" >
+		<div class="black" data-plug-layout="column" data-width="200" data-minwidth="50" data-maxwidth="250">&nbsp;</div>
+		<div class="red" data-plug-layout="column" data-width="5"  data-bar=1 >&nbsp;</div>
+		<div class="black" data-plug-layout="column" data-width="width-310" >&nbsp;</div>
+		<div class="red" data-plug-layout="column" data-width="5"  data-bar=1 >&nbsp;</div>
+		<div class="black" data-plug-layout="column" data-width="100" >&nbsp;</div>
+	</div>
+	<div class="red" data-plug-layout="row" data-height="5" data-bar=1 >&nbsp;</div><!-- 可拖拽-->
+	<div class="black" data-plug-layout="row" data-height="20" >&nbsp;</div>
+</div>
+</div>
+html:
+<pre data-code-print='html' class="prettyprint lang-html" style="">
+</pre>
+js:
+<pre data-code-print='js' class="prettyprint" style="">
+</pre>
+</div>
+
+<script type="text/javascript" data-code-source="js">
+J.require("jquery");
+J.require("layout");
+J.ready(function (argument) {
+	$("#example1").layout({parent:$("#example1").parent(),resize:function (width,height) {
+		// 当对象宽高发生改变时
+	},ready:function(){
+		$("#example1").fadeIn("fast")
+	}});
+});
+</script>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+name: jpack
+version: 1
+handle:
+- directoryindex:  test.html 

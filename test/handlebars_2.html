@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../j.js"></script>
+<script type="text/javascript" src="pretty.js"></script>
+<style type="text/css">
+.red{background: red;}
+.blue{background: blue;}
+.yellow{background: yellow;}
+.gray{background: gray;}
+.green{background: green;}
+.black{background: black;}
+</style>
+</head>
+<body>
+<div data-code="example1">
+	<p>
+	 </p>
+	<h1>handlebars:模板</h1>
+	<h3>例子1：进行运算方式</h3>
+	<div>
+	<h4>运行结果</h4>
+	<div  data-code-source="html">
+	<div id="model1"></div>
+	<script id="template1" type="text/x-handlebars-template">
+		<h3>{{#if title}}{{title}}{{/if}}</h3>
+		<p>动态值：{{(rbody)}}</p>
+		<p>嵌入html：{{{hbody}}}</p>
+		<p>{{#if (1)}}判断值：{{body}}{{/if}}</p>
+		<h5>{{author.name}}</h5>
+		<h5>{{scort.chinese}}</h5>
+		<h5>{{this.scort.english}}</h5>
+		<h5>{{scort.math}}</h5>
+		<h5>{{scort.other.s}}</h5>
+		<h5>{{func scort.math func2}}</h5>
+		<h5>{{func2 "he\"he"}}</h5>
+		<h5>{{func3 ({a:1}.a+1) (3) }}</h5>
+		<h5>\\{{</h5>
+		<h1>{{(scort.chinese--)}}</h1>
+	</script>
+	</div>
+	html:
+	<pre data-code-print='html' class="prettyprint lang-html" style=""><h1>{{()}}</h1>
+	</pre>
+	js:
+	<pre data-code-print='js' class="prettyprint" style="">
+	</pre>
+	</div>
+	<script type="text/javascript" data-code-source="js">
+	J.require("jquery");
+	J.require("handlebars");
+	J.ready(function (argument) {
+		var context = {
+			"if":"hehe",
+			title: "this is title !",
+			author: {id: 47,name: "test name"},
+			scort:{chinese:100,"chinese--":99,english:90,math:80,other:{s:1}},
+			body: "Hello world!",
+			rbody: "body",
+			hbody:"<a href='javascript:;'>这是一段html嵌入</a>"
+			func:function(a,b){return this.author.name+":"+this.scort.chinese+":"+b(a);},
+			func2:function(a){return a;},
+			func3:function(a,b){return a+b;}
+		};
+		$("#model1").html(Handlebars.compile($("#template1").html())(context));
+
+	});
+	</script>
+</div>
+<div data-code="example2">
+	<h3>例子2：进行运算方式</h3>
+	<div>
+	<div  data-code-source="html">
+	<script id="template2" type="text/x-handlebars-template">
+	</script>
+	</div>
+	html:
+	<pre data-code-print='html' class="prettyprint lang-html" style="">
+	</pre>
+	js:
+	<pre data-code-print='js' class="prettyprint" style="">
+	</pre>
+	</div>
+	<script type="text/javascript" data-code-source="js">
+	</script>
+</div>
+</body>
+</html>

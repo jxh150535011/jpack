@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../j.js"></script>
+<style type="text/css">
+</style>
+</head>
+<body>
+<div>
+<div id="alog"></div>
+<div id="tree1" class="ztree"></div>
+
+</div>
+
+<br/>
+<script type="text/javascript">
+
+J.require("tree",function(argument) {
+	
+
+});
+J.ready(function(){
+    _init_ztree();
+});
+function  _init_ztree(){
+        var setting = { };
+
+        var zNodes =[
+            { name:"父节点1 - 展开", open:true,
+                children: [
+                    { name:"父节点11 - 折叠",
+                        children: [
+                            { name:"叶子节点111"},
+                            { name:"叶子节点112"},
+                            { name:"叶子节点113"},
+                            { name:"叶子节点114"}
+                        ]},
+                    { name:"父节点12 - 折叠",
+                        children: [
+                            { name:"叶子节点121"},
+                            { name:"叶子节点122"},
+                            { name:"叶子节点123"},
+                            { name:"叶子节点124"}
+                        ]},
+                    { name:"父节点13 - 没有子节点", isParent:true}
+                ]},
+            { name:"父节点2 - 折叠",
+                children: [
+                    { name:"父节点21 - 展开", open:true,
+                        children: [
+                            { name:"叶子节点211"},
+                            { name:"叶子节点212"},
+                            { name:"叶子节点213"},
+                            { name:"叶子节点214"}
+                        ]},
+                    { name:"父节点22 - 折叠",
+                        children: [
+                            { name:"叶子节点221"},
+                            { name:"叶子节点222"},
+                            { name:"叶子节点223"},
+                            { name:"叶子节点224"}
+                        ]},
+                    { name:"父节点23 - 折叠",
+                        children: [
+                            { name:"叶子节点231"},
+                            { name:"叶子节点232"},
+                            { name:"叶子节点233"},
+                            { name:"叶子节点234"}
+                        ]}
+                ]},
+            { name:"父节点3 - 没有子节点", isParent:true}
+
+        ];
+    $.fn.zTree.init($("#tree1"), setting, zNodes);
+}
+function  _init_jstree (argument) {
+    $("#tree1").bind("before.jstree", function (e, data) {  
+        $("#alog").append(data.func + "<br />");  
+    }).jstree({  
+        "plugins" : [   
+            "themes","json_data","ui","crrm","search","types"
+        ],
+        themes:{ 
+            theme : "default", 
+            url : false,
+            dots : true,
+            icons : true
+        },
+        "json_data" : {
+            "ajax" : {  
+                type : "post",  
+                "url" : "data.txt",//异步请求数据  
+                "data" : function (n) {   
+                    return {   
+                          
+                    };   
+                }  
+            }  
+        },  
+        "types" : {  
+            "max_depth" : -2,  
+            "max_children" : -2,  
+            "valid_children" : [ "drive" ],  
+            "types" : {  
+                "default" : {  
+                    "valid_children" : [ "default", "folder" ],  
+                    "icon" : {  
+                        //"image" : "/images/jstree/folder.png"  
+                    }  
+                }  
+            }  
+        },  
+        "callback" : {        
+                onselect : function(node,tree_obj){//节点单击事件    
+                },    
+            }, //end callback  
+        "ui" : {  
+            "initially_select" : [ "/zonda" ]  
+        },  
+        "core" : {   
+            "initially_open" : [ "/zonda"]   
+        }
+    });
+}
+
+
+</script>
+</body>
+</html>

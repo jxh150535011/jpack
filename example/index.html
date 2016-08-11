@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../j.js"></script>
+<style type="text/css">
+html,body{overflow: hidden;margin: 0;padding: 0;}
+</style>
+</head>
+<body>
+<div data-plug="layout" test-id="Lv1" data-height="height"  data-width="width">
+<div data-plug-layout="row" test-id="Lv11"  data-height="30">
+&nbsp;
+</div>
+<div data-plug-layout="row" test-id="Lv12" data-height="height-60" data-width="width">
+<div data-plug-layout="column" test-id="Lv121" data-width="200">
+<div id="tree1" class='ztree'></div>
+</div>
+<div data-plug-layout="column" data-width="10"  test-id="Lv122" data-height="height" style="background:gray;" data-bar=1>&nbsp;
+</div>
+<div data-plug-layout="column" data-width="width-210" data-height="height" test-id="Lv123">
+<div data-plug-layout="ceil" data-width="width" data-height="height" test-id="Lv1231">
+<iframe id="iframe1" scrolling="auto"  frameborder="0" width='100%' height='100%'></iframe>
+</div>
+</div>
+</div>
+<div data-plug-layout="row" test-id="Lv13"  data-height="30">
+&nbsp;
+</div>
+</div>
+<div id="layover" style="position:absolute;width:100%;height:100%;background-color:#ffffff;left:0px;top:0px;"></div>
+<script type="text/javascript">
+var _M_TREE_ROWS=[{id:"regexp",name:"正则",link:"regexp.html"}];
+var zTreeObj=null;
+J.require("jquery");
+J.require("layout");
+J.require("tree?plug=ztree");
+J.ready(function(){
+	$("[data-plug='layout']").layout({
+		resize:function(){
+			if($.browser.msie&&$.browser.version=="6.0"){
+				document.body.scrollTop=0;
+				document.body.scrollLeft=0;
+			}
+		}
+		,waitingHtml:"&nbsp;"
+		,ready:function(){
+			$("#layover").remove();
+		}
+	});
+
+	var setting={};
+	setting.callback={};
+	setting.callback.onClick=function(event, treeId, treeNode){
+		var link=treeNode["link"];
+		if(!link)return;
+		$("#iframe1").attr("src",link);
+	}
+	setting.callback.onAsyncSuccess=function(){
+	}
+	zTreeObj=$.fn.zTree.init($("#tree1"), setting, _M_TREE_ROWS);
+	
+	var nodeId=J.getQueryString("target")||"about";
+	if(nodeId){
+		var snode = getNodes(nodeId);
+		snode&&zTreeObj.selectNode(snode,true);
+		var link=snode["link"];
+		if(!link)return;
+		$("#iframe1").attr("src",link);
+	}
+});
+
+function getNodes(id){
+	if(!zTreeObj)return null;
+	var nodes = zTreeObj.getNodes(),snode=null;
+	treeEach(nodes,function (node) {
+		if(node.id==id){
+			snode=node;
+			return false;
+		}
+	});
+	return snode;
+}
+function  treeEach (nodes,fn) {
+	if(!nodes)return;
+	for(var i=0,l=nodes.length;i<l;i++){
+		var f=fn&&fn(nodes[i]);
+		if(f==null&&nodes[i].children)f=treeEach(nodes[i].children,fn);
+		if(f===true)continue;
+		else if(f===false)return false;
+	}
+}
+</script>
+</body>
+</html>

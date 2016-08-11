@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <script type="text/javascript" src="../res/lib/jquery-1.10.2.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../res/lib/sea.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../res/lib/seajs-css.js" charset="utf-8"></script>
+    <script type="text/javascript">
+        seajs.config({
+            base: '../res/',
+            map: [
+            [/^(.*\.(?:css|js))(.*)$/i, '$1?ver='+new Date().getTime()]
+            ],
+            alias: {
+                "jquery": "jquery",
+                "underscore": "underscore"
+            },
+            preload: ['seajs-text','seajs-css'],
+            charset: 'utf-8'
+        });
+    </script>
+
+</head>
+<body>
+<div data-code="example1">
+	<h1>test</h1>
+	<div>
+	<div  data-code-source="html">
+	<div id="msg1"></div>
+	</div>
+	html:
+	<pre data-code-print='html' class="prettyprint lang-html" style="">
+	</pre>
+	js:
+	<pre data-code-print='js' class="prettyprint" style="">
+	</pre>
+	<script type="text/javascript" data-code-source="js">
+	(function(){
+		//g global，全文搜索，默认搜索到第一个结果接停止
+		var str="abc123"
+		var rex=/[0-9]/;
+		console.log(rex.exec(str),rex.lastIndex);
+		console.log(rex.exec(str),rex.lastIndex);
+
+
+
+
+
+
+		return;
+		var rex=/[0-9]/g;
+		var str="0A";
+		console.log("lastIndex:"+rex.lastIndex);
+		console.log("test:"+rex.test(str));
+
+		console.log("lastIndex:"+rex.lastIndex);
+		console.log("test:"+rex.test(str));
+
+		console.log("lastIndex:"+rex.lastIndex);//结果清零
+
+		var rex=/[0-9]/g;
+		var str="0A";
+		console.log("lastIndex:"+rex.lastIndex);
+		console.log("test:"+rex.test(str));
+
+		console.log("lastIndex:"+rex.lastIndex);
+		console.log("test:"+rex.test(str));
+
+		console.log("lastIndex:"+rex.lastIndex);//结果清零
+
+	})();
+	</script>
+</div>
+<script type="text/javascript">
+seajs.use("./pretty.js", function (main) { });
+</script>
+
+</body>
+</head>

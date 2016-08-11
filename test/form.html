@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../j.js"></script>
+<script type="text/javascript" src="pretty.js"></script>
+<style type="text/css">
+.red{background: red;}
+.blue{background: blue;}
+.yellow{background: yellow;}
+.gray{background: gray;}
+.green{background: green;}
+.black{background: black;}
+.text1{
+padding: 0 10px 0 6px;
+font-family: '宋体';
+background-repeat: no-repeat;
+border-left: 1px solid #ccc;
+border-top: 1px solid #ccc;
+border-right: 1px solid #ddd;
+border-bottom: 1px solid #ddd;
+height: 25px;
+font-size: 14px;
+width: 200px;
+color: #333;
+line-height: 25pxurl(0);
+-webkit-transition-property: all;
+-webkit-transition-duration: .5s;
+-moz-transition-property: all;
+-moz-transition-duration: .5s;
+-o-transition-property: all;
+-o-transition-duration: .5s;
+transition-property: all;
+transition-duration: .5s;
+}
+.controls{margin-top: 5px;}
+.tip{font-size: 12px; color:gray;padding-left: 10px;}
+</style>
+</head>
+<body>
+<div data-code="example1">
+	<h1>form:表单提交(综合介绍,兼容.net updatepanel)</h1>
+	<h3>例子1：表单提交</h3>
+	<h3>注意：</h3>
+	<p style="color:red;">1,对于需要验证的标签  必须指定verifykey 标记或通过配置verifyName 属性 自定义标记</p>
+	<p style="color:red;">2,对于需要绑定的form必须指定唯一ID</p>
+	<p style="color:red;">3,对于有效的form内部submit已经被处理绑定,具体请看脚本 (注1)</p>
+<div>
+<div data-code-source="html">
+<!--from 必须存在  accept action 生效-->
+<form id="form1" accept="" action="">
+<!-- verifykey 是当前插件的关键字 -->
+<h3>文本:</h3>
+默认自定义[n:数字],[s:非空字符],[c:字母],[*:在没有特殊情况下 代表任意字符]
+<div class="controls">数字(2位精度)：<input type="text" class="text1" verifykey="number1"/></div>
+<div class="controls">数字(整数)：<input type="text"  class="text1" verifykey="number2"/></div>
+<div class="controls">字符(普通字符)：<input type="text"  class="text1"  verifykey="str1"/></div>
+<div class="controls">字符(身份证)：<input type="text"  class="text1" verifykey="str2"/><span class="tip">测试</span></div>
+<div class="controls">显示数字(nn.nn)：<input type="text"  class="text1"  verifykey="mask1"/></div>
+<div class="controls">自定义控制 [0][0-5]nn-(nnnnnnn)：<input type="text"  class="text1" verifykey="mask2"/></div>
+<br/>
+复选:
+<div class="controls"><input type="checkbox"  verifykey="f2" name="f2" value="1" />
+<input type="checkbox"  verifykey="f2" name="f2" value="2" />
+<input type="checkbox"  verifykey="f2" name="f2" value="3" /></div>
+<br/>
+单选:
+<div class="controls"><input type="radio"  verifykey="f3" name="f3" value="1"/>
+<input type="radio"  verifykey="f3" name="f3" value="2"/>
+<input type="radio"  verifykey="f3" name="f3" value="3"/></div>
+<br/>
+下拉:
+<div class="controls"><select verifykey="f4">
+	<option></option>
+	<option value="1">1</option>
+	<option value="2">2</option>
+	<option value="3">3</option>
+</select></div>
+<br/>
+提交:
+<input id="submit1" type="submit" value="提交" /><br/>
+
+<br/>
+</form>
+</div>
+<pre id="result" class="prettyprint"></pre>
+html:
+<pre data-code-print='html' class="prettyprint lang-html" style="">
+</pre>
+js:
+<pre data-code-print='js' class="prettyprint" style="">
+</pre>
+</div>
+
+
+<script type="text/javascript" data-code-source="js">
+//默认关键字为verifykey 配置参数verifyName='name' 可关键字 识别为name
+//对于表单 id 不能为空
+J.require("jquery");
+J.require("formv3",function(argument) {
+	$.fn.form({
+	beforeback:_beforeback,
+	asyncbeforeback:_asyncbeforeback,
+	back:_back,//可重载
+	afterback:_afterback,//可重载
+	asyncafterback:_asyncafterback
+	});//默认是整个文档下面的存在ID表单依次进行绑定
+	//$("#form1").form({beforeback:_beforeback});//对当前表单进行绑定
+	//$("#form2").form({beforeback:_beforeback});//当前表单不存在 绑定失效
+	//$(document).form({beforeback:_beforeback});//对内部表单进行绑定
+
+	//保证key全局唯一 其中verifyName 可根据不同的表单定义
+	//key值不能为空 filter 表示当前文字过滤通过 是否立即进行rule规则控制
+	//cache 是否启用 缓存
+	$.fn.form.verify({key:"number1",rule:"number(2)",word:"number",filter:true,back:_back,asyncback:_asyncback});
+	$.fn.form.verify({key:"number2",rule:"int",word:"number",filter:true,back:_back,asyncback:_asyncback});
+	$.fn.form.verify({key:"str1",rule:"char",back:_back,asyncback:_asyncback});
+	$.fn.form.verify({key:"str2",rule:"idcard",word:"idcard",filter:true,back:_back,asyncback:_asyncback});
+	$.fn.form.verify({key:"mask1",mask:"nn.nn",back:_back,asyncback:_asyncback});
+	$.fn.form.verify({key:"mask2",mask:"[0][0-5]nn-(nnnnnnn)",placeholder:"*",back:_back,asyncback:_asyncback});
+
+	//$("#form1").form("submit");//表单提交
+	//*******注1*******
+	$("#submit1").click(function(){//$("#submit1") 内部已经处理 本身会触发 $("#form1").form("submit"); 
+		console.log("click");
+		alert("成功提交");
+		return false;
+		//return false;
+		//return false;
+		//$("#form1").form("submit");//这段是无效 是 不会执行的
+		//$("#form2").form("submit");//如果存在$("#form2") 可被触发
+	});
+});
+function _beforeback(data){//可识别具体表单
+	console.log("beforeback");
+	console.log(data);
+}
+function _asyncbeforeback(data,fn){//可识别具体表单
+	console.log("asyncbeforeback");
+	console.log(data);
+	fn(true);//必须得回调 不然 一直终止等待
+}
+function _back(src){//自定义验证 返回结果影响最终值
+	console.log(src);
+	if(src.key=="str2"){
+		var msg=src.test.rex?"格式正确":"格式错误";
+		src.target.next(".tip").remove();
+		if(src.type=="blur"||src.type=="submit")src.target.after("<span class='tip'>"+msg+"</span>");
+		else src.target.after("<span class='tip'>"+(src.test.rex&&src.value.length>0?"格式正确":"等待验证过程")+"</span>");
+	}
+}
+function _asyncback(src,fn){
+	console.log(src);
+	if(src.type=="submit")fn(true);//异步 当且仅当在submit时 必须进行触发回调
+}
+//异步验证 "注：表单提交时，必须调用回调方法fn"
+function _afterback(data){
+	//jQuery.noConflict();
+	//console.log($);
+	console.log("afterback");
+	console.log(data);
+	$("#result").removeClass("prettyprinted").text("表单值："+J.toStr(data.data));
+	prettyPrint();
+}
+function _asyncafterback(data,fn){
+	console.log("asyncafterback");
+	console.log(data);
+	fn(true);//必须得回调 不然 一直终止等待
+}
+
+</script>
+</div>
+
+</body>
+</html>

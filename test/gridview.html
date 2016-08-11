@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../j.js"></script>
+<script type="text/javascript" src="pretty.js"></script>
+<style type="text/css">
+.red{background: red;}
+.blue{background: blue;}
+.yellow{background: yellow;}
+.gray{background: gray;}
+.green{background: green;}
+.black{background: black;}
+</style>
+</head>
+<body>
+<div data-code="example1">
+	<h1>gridview:基本表格布局</h1>
+	<h3>例子1：创建一个表格</h3>
+<div>
+<div data-code-source="html">
+<a href="javascript:_add();">添加</a>
+<a href="javascript:_pager_search();">结果为空的查询</a>
+<div id="gridview1">
+</div>
+</div>
+html:
+<pre data-code-print='html' class="prettyprint lang-html" style="">
+</pre>
+js:
+<pre data-code-print='js' class="prettyprint" style="">
+</pre>
+</div>
+
+<script type="text/javascript" data-code-source="js">
+J.require("jquery");
+J.require("ui?c=gridview");//sytle 默认是default 为none时候 不加载样式
+J.ready(function (argument) {
+	var data={};
+	data.rows=[{"c1":"行0列1","c2":"值2","c3":"换行测试换行测试"},{"c1":"行1列1","c2":"值1"},{"c1":"行2列1","c2":"值1"},{"c1":"行3列1","c2":"值2"},{"c1":"行4列1","c2":"值3"}];
+	data.total=data.rows.length;
+	$("#gridview1").gridview({
+		//width align wrap 均可外部统一设置 
+		columns:[
+			{text:"方向列",content:"靠左",align:"left",width:"15%"},
+			{text:"换行列",field:"c3",align:"center",width:80,wrap:true},//换行
+			{text:"绑定列",field:"c1"},
+			{text:"渲染列",render:function(row,rowi){
+				var s=(row["c1"]||"").replace("列1","列2");
+				return s;
+			}},
+			//默认下拉 去数据内部字段 text 以及 value 使用 displayName 或则  displayValue 更改
+			{text:"下拉",field:"c2",type:"select",items:[
+				{},{text1:"选择1",value:"值1"},{text1:"选择2",value:"值2"}]
+				,displayName:"text1"
+			},//editState:"edit" 设定编辑模式 则都显示下拉状态 readonly:true 可控制为下拉状态 不可更改
+			{type:"command",add:"添加",edit:"编辑",cancel:"取消",update:"更新",width:120}
+		],
+		trigger:{
+			"rowupdate":function(row1,row2,type){//row1 row2 分别是之前的数据 于之后的 ，对于add数据 row1为null
+				//type:0 为增加 1为修改
+			}
+		},
+		pager:{pagesize:10},
+		footer:{pager:true},
+		data:data,
+		autonumber:true,//是否增加序号 如果设置为非0 数字 则从这个数字开始递增
+		autonumberwidth:80
+	});
+	$("#gridview1").gridview("datasource");//数据绑定
+});
+function _add(){
+	//$("#gridview1").gridview("addRow",[{},0]);//参数必须是数组形式 第一个参数为一个数据对象用于付出初始值 
+	//$("#gridview1").gridview("addRow");//一开始增加
+	$("#gridview1").gridview("addRow",[10000]);//最后增加一行 超过最大行数 即可
+}
+function _pager_search(){
+	var data={rows:[],total:0};
+	$("#gridview1").gridview({
+		pager:{pagesize:10},
+		footer:{pager:true}
+	});
+	$("#gridview1").gridview("datasource",[{data:data}]);//数据绑定
+}
+</script>
+</div>
+
+</body>
+</html>

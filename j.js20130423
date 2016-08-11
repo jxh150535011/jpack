@@ -1,0 +1,652 @@
+/*
+         ___             ___     ___     ___                      |
+       / \  \          / \  \  / \__\  / \  \  hello world!       |
+       \  \  \         \  \  \/  /  /  \  \  \                    |
+        \  \  \         \  \ /  /  /    \  \  \                   |
+         \  \  \         \  \  /  /      \  \  \                  |
+          \  \  \         \  \/__/        \  \  \________         |
+           \  \  \        /\  \  \         \  \  \_____  \        |
+       ___  \  \  \      /  \  \  \         \  \  \  \ \  \       |
+      /\  \  \  \  \    /  / \  \  \         \  \  \  \ \  \      |
+      \ \  \__\__\  \  /  /  /\  \  \         \  \  \  \ \  \     |
+       \ \___________\ \ /__/  \  \__\         \  \__\  \ \__\    |
+        \____________/          \/___/          \/__ /   \/__/    |
+                                       my name is jxh!q:150535011 |
+
+*/
+/*类包方法 
+提供唯一路口
+金兴亨 2012-02-01
+最后更新时间 2013-04-17 14:48
+*/
+var J_LOADED=true;
+var J_NAME="J";
+var J_SCRIPT="j([.]min)?.js";
+if(typeof window[J_NAME]== "undefined") J_LOADED=false;
+//内部方法 统一前面+ _  私有变量+_ 普通外部对象引用+$ 其余为基本变量名
+(function(){
+    if(J_LOADED)return;
+    var BASICPATH="";
+    function jpack(){
+        this.index=0;
+        this.elems={};//已加载标签
+        this.plugins={};//key:{urls:purls,fn:fn,complete:false}
+        this.urls=[];
+        this._require_urls=[];//建立依赖队列
+        this._ref={};//依赖关系数组
+        this._config={};
+        this._code="";
+        this._self_url=null;//自身 url 对象
+        this._main_url=null;//主方法url 对象
+        this.fn={};//方法类库
+        this.SCRIPTPATH="";//当前js路径
+        //种子
+        this._chars = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+        this.init();
+    };
+    Function.prototype.extend=function(parent, overrides){
+        if (typeof parent != 'function') return this;//保存对父类的引用
+        this.base = parent.prototype;
+        this.base.constructor = parent;//继承
+        var f = function () { };
+        f.prototype = parent.prototype;
+        this.prototype = new f();
+        this.prototype.constructor = this;//附加属性方法
+        if (overrides) $.extend(this.prototype, overrides);
+    };
+    jpack.prototype.__extend=function(parent,child){
+        var cf=child.constructor;
+        cf.extend(parent.constructor,{});
+        child.defaults=this.extend(parent.defaults,child.defaults);
+    };
+    jpack.prototype.extend = function (parent, overrides){
+        if(!overrides)return parent;
+        parent=parent||{};
+        for (var k in overrides) {
+            parent[k]=overrides[k];
+        }
+        return parent;
+    };
+    jpack.prototype.parse_relative_url=function(path){//根据url路径处理../
+        //计算内部的../将其替换或则晋级
+        var url_list=[];
+        path.replace(/([\/][^\/]*)/gi,function($1){
+            if($1=="/..")url_list.pop();
+            else url_list.push($1);
+        });
+        return url_list.join('');
+    };
+    jpack.prototype.url_params=function(url){//拆分url
+        var u={head:"",path:""};
+        u.path=url.replace(/^((http:\/\/)?[^.\/][^\/]*)/gi,function($1){//  /abc/abc.html 头部地址获取为 /abc
+            u.head=$1;//获取头部地址 去除开头任意多个点
+            return "";
+        });
+        //if(u.path&&u.path[0]!="/")u.path="/"+u.path;
+        return u;
+    };
+    jpack.prototype.format=function(url,relative,params){//格式化标签 relative表示是否处理为相对路径
+        // url 斜杠开头 表示绝对路径开始
+        var u=this.url_params(url);
+        if(!u.head){
+            u.head=this.getBasicPath();
+            var p=window.location.pathname.replace(/([\/][^\/]*)$/gi,"");//去除最后 /**
+            if(u.path.indexOf("..")==0)u.path=p+"/"+u.path;
+        }
+        rurl=this.parse_relative_url(u.path);
+        if(!relative){
+            rurl=u.head+rurl;
+        }
+        return params==false?rurl.replace(/[?].*$/gi,""):rurl;
+    };
+    // name.ext
+    jpack.prototype.getPath=function(name){//获取某个插件前缀路径
+        var url="";
+        this._init();//读取当前已经加载的js或则css 数值
+        //var rex=new RegExp(""+name+"([?].*)?$","gi"); 上面与下面等价
+        var rex=new RegExp("[/]"+name+"(?:([?].*)|)$","gi");
+        for(var k in this.elems){
+            if(rex.test(k)){
+                url=k.replace(rex,"");
+                break;
+            }
+        }
+        return url;
+    }
+    jpack.prototype.getPluginsPath=function(name){
+        var r=this._config.plugins[name]||[];
+        return r&&r.length>0?r[0]:"";
+    }
+
+    jpack.prototype.getBasicPath=function(){//后面不带/ 例如192.168.0.1
+        if(BASICPATH)return BASICPATH;
+        BASICPATH=window.location.protocol + '//' + window.location.host;
+        var u=this.url_params(this._main_url||this._self_url);
+        if(u.head==BASICPATH||!u.head)//如果为同一个域名 (两个都已默认带端口) //或则u.head 为空 意味着 同一个域名
+        {
+            //url=this._self_url.replace(BASICPATH,"");//格式化后
+            //alert(BASICPATH);
+            //取第一个前缀为 虚拟目录 通常js所在目录 跟其他html目录 应为不同文件夹节点
+            //如果相同 认定为第一集虚拟目录
+            var pathName= window.location.pathname;
+            var webName = pathName == '' ? '' : pathName.replace(/^[\/]?([^\/]+)[\/](.*)$/gi,"$1");//取第一个集合
+            if(webName&&u.path.indexOf("/"+webName)==0)//url是含有前缀格式
+                BASICPATH+="/"+webName;
+        }
+        else BASICPATH;
+        //else BASICPATH=u.head;
+        return BASICPATH;
+    }
+
+    jpack.prototype.autoload=function(){
+        if(this._auto!="false"){
+            if(this._core)this.use(this._core);
+        }
+    }
+    //当前函数在js 文件中运行 最好同域下执行 以正确获取虚拟目录 否则可能导致虚拟目录缺失
+    jpack.prototype.main=function(){//设置主函数 路口 每次调用 将会切换站点路径 直接影响根目录 
+        if(!this._main_url){
+            BASICPATH="";//清空根目录 进行重新计算
+            this._main_url=this._get_run_script_url();
+            var u=this.url_params(this._main_url);//处理成绝对路径
+            if(u.head&&u.head.indexOf("http://")!=0){//head存在 并且头不是http 判定为相对路径
+                this._main_url=window.location.href.replace(/[\/][^\/]*$/gi,"/")+this._main_url;//获取当前页面url
+            }
+            else if(this._main_url.indexOf("/")!=0){//非绝对路径
+                this._main_url=window.location.pathname.replace(/[\/][^\/]*$/gi,"/")+this._main_url;
+                this._main_url=this.parse_relative_url(this._main_url);
+            }
+        }
+    }
+    jpack.prototype._get_run_script_url=function(){
+        var scripts = document.getElementsByTagName('script');
+        return scripts.length>0?scripts[scripts.length-1].getAttribute("src"):"";
+    }
+    jpack.prototype._init=function(css){
+        var scripts = document.getElementsByTagName('script');
+        var urls=[];
+        if(css!==false){// 不处理css
+            var links = document.getElementsByTagName('link');
+            for(var i=links.length-1;i>-1;i--){
+                if(links[i].getAttribute("complete"))continue;
+                urls.push(links[i].href);
+                links[i].getAttribute("complete",1);
+            }
+        }
+        for(var i=scripts.length-1;i>-1;i--){
+            var url=scripts[i].src;
+            urls.push(url);
+            scripts[i].parentNode.removeChild(scripts[i]);
+        }
+        var url="";
+        while((url=urls.pop())){
+            if((!url)||url=="undefined"||!(url=this.format(url)))continue;//计算出绝对路径
+            this.elems[url]=true;
+        }
+    }
+    jpack.prototype.init=function(){//获取 初始化路径
+        if(this._self_url)return;
+        var scripts = document.getElementsByTagName('script');
+        for(var i=scripts.length-1;i>-1;i--){
+            var url=scripts[i].src;
+            if((new RegExp("[\\|/]"+J_SCRIPT+"([?].*)*$","gi")).test(url)){
+                this._core=scripts[i].getAttribute("core");
+                this._auto=scripts[i].getAttribute("auto");
+                this._self_url=url;
+                this.SCRIPTPATH=this.getPath(J_SCRIPT);
+                break;
+            }
+         }
+    };
+    jpack.prototype.getParam=function(name,src){
+        src=src||this._self_url;
+        if(src.indexOf('?')<0)return "";
+        src=src.substr(src.indexOf('?')+1);
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r =src.match(reg);
+        if (r != null) return unescape(r[2]);
+        return "";
+    };
+    jpack.prototype.getQueryString=function(name,un){
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return un?decodeURIComponent(r[2]):r[2];
+        return "";
+    };
+    jpack.prototype.setQueryString = function(url, key, value,del) {
+        var parts = url.split('?');
+        var path = parts[0].replace(/#*$/gi,"");
+        var query = parts[1]||"";
+        var kvp = query.split('&');
+        var i=kvp.length; var x,index=i; 
+        while(i--) {
+          x = kvp[i].split('=');
+          if (x[0]==key) {
+            index=i;
+            x[1] = value;
+            kvp[i] = x.join('=');
+            break;
+          }
+        }
+        if(i<0) kvp[kvp.length] = [key,value].join('=');
+        if(del&&(value=="undefined"||!value))kvp.splice(index,1);
+        url = path +'?'+ kvp.join('&').replace(/^[&]*/gi,""); 
+        return url;
+    };
+    jpack.prototype.setCookie=function(name,value,expires,path,domain){
+        var str=name+"="+escape(value);
+        if(expires){
+         var date=new Date();
+         date.setTime(date.getTime()+expires*60*1000);//expires单位为分
+         str+=";expires="+date.toGMTString();
+        }
+        str+=path?(";path="+path):"";//指定可访问cookie的目录
+        str+=domain?(";domain="+domain):"";//指定可访问cookie的域
+        document.cookie=str;
+    };
+    jpack.prototype.getCookie=function(name){
+        var str=document.cookie.split(";");
+        for(var i=0;i<str.length;i++){
+            var str2=str[i].split("=");
+            var s=str2[0].replace(/^[\s]*|[\s]*$/gi,"");
+            if(s==name&&str2.length>1)return unescape(str2[1]);
+        }
+    };
+    jpack.prototype.toStr=function(object){
+        var str="",type=$.type(object),flag="object,array".indexOf(type);
+        if(flag>-1){
+            for(var k in object){
+            str+=","+(flag==0?"\""+k+"\":":"")+this.toStr(object[k]);
+            }
+            if(str.length>0)str=str.substr(1);
+            return flag==0?"{"+str+"}":"["+str+"]";
+        }
+        else if(type=="string")return "\""+object+"\"";
+        else if(type=="number")return ""+object;
+        else if(type=="boolean")return ""+object;
+        return "";
+    };
+    jpack.prototype.loadScript=function(url,charset,fn){
+        var head = document.getElementsByTagName('head')[0]; 
+        var script = document.createElement('script'); 
+        script.type = 'text/javascript'; 
+        script.src = url; 
+        script.defer="true";
+        script.charset = charset || 'utf-8';
+        script.onerror=function(){
+            return fn&&fn(url,false);
+        }
+        script.onload = script.onreadystatechange=function(){
+            if(!script||script.readyState == 'loading')return;
+            if (script && script.readyState && script.readyState != 'loaded' && script.readyState != 'complete') return fn&&fn(url,false);
+            script.onload = script.onreadystatechange = script.onerror = null;
+            script.parentNode.removeChild(script);
+            script=null;
+            return fn&&fn(url,true);
+        }
+        head.appendChild(script);
+    };
+    jpack.prototype.loadElems=function(url,charset,fn){
+        if(/js([?]|$)/gi.test(url))this.loadScript(url,charset,fn);
+        else if(/css([?]|$)/gi.test(url))this.loadStyle(url,charset,fn);
+        else this.loadHtml(url,charset,fn);
+    }
+    jpack.prototype.loadStyle=function(url,charset,fn){
+        var head = document.getElementsByTagName('head')[0]; 
+        var elem = document.createElement('link'); 
+        elem.type = 'text/css'; 
+        elem.href = url; 
+        elem.rel="stylesheet";
+        elem.charset = charset || 'utf-8';
+        elem.onload = elem.onreadystatechange=function(){
+            if(!elem||elem.readyState == 'loading')return;
+            if (elem && elem.readyState && elem.readyState != 'loaded' && elem.readyState != 'complete') return fn&&fn(url,false);
+            elem.onload = elem.onreadystatechange = elem.onerror = null;
+            //elem.parentNode.removeChild(elem);
+            elem=null;
+            return fn&&fn(url,true);
+        }
+        head.appendChild(elem);
+    };
+    jpack.prototype.loadHtml=function(url,charset,fn){
+        var body = document.getElementsByTagName('body')[0]; 
+        var elem = document.createElement('iframe'); 
+        elem.style.display="none";
+        elem.src = url; 
+        elem.charset = charset || 'utf-8';
+        elem.onload = elem.onreadystatechange=function(){
+            if(!elem||elem.readyState == 'loading')return;
+            if (elem && elem.readyState && elem.readyState != 'loaded' && elem.readyState != 'complete') return fn&&fn(url,false);
+            elem.onload = elem.onreadystatechange = elem.onerror = null;
+            var doc=null;
+            try{ var doc=this.contentWindow.document;}catch(e){};
+            elem.parentNode.removeChild(elem);
+            elem=null;
+            return fn&&fn(url,doc);
+        }
+        body.appendChild(elem);
+    };
+    jpack.prototype.loadFiles=function(urls,fn) {
+        return this._loadPlugins({urls:urls,fn:fn});
+    };
+   jpack.prototype._loadPlugins=function(data){
+        data=data||{};
+        var urls=data.urls||[];
+        data.key="plugin"+(this.index++);
+        var purls=[],l=urls.length;
+        for(var i=0;i<l;i++){
+            var url=this.format(urls[i]);
+            purls.push(url);
+        }
+        if(data.append===false){//往前插入 purls 内部为有序数组
+            this.urls=purls.concat(this.urls);
+        }
+        else this.urls=this.urls.concat(purls);
+        data.urls=purls;
+        data.complete=false;
+        this.plugins[data.key]=data;
+        this.loadStart();
+        return data.key;
+    };
+
+    jpack.prototype.loadPlugins=function(urls,fn,efn){//fn 全部完成 efn 每个循环 return false 终止加载
+        return this._loadPlugins({urls:urls,fn:fn,efn:efn});
+    };
+    jpack.prototype.loadStart=function(){
+        if(this.timer)clearTimeout(this.timer);
+        var that=this;
+        this.timer=setTimeout(function(){that.load();},10);
+    }
+    jpack.prototype.load=function(){
+        var that=this;
+        if(this.loading)return true;
+        if(this.urls.length<1)return this._load_require();//处理依赖
+        this.loading=true;
+        var url=this.urls[0];
+        //alert("load:"+url+"*"+this.elems[url]);
+        this._get_require_url(url);
+        this.urls.splice(0,1);
+        if(!this.elems[url]){
+            //这里只判断js目录名是否一致 不同网站相同js名 也认为同一个
+            //同时不考虑参数
+            this.loadElems(url,null,function(u,flag){
+                that.complete(u,flag);
+            });
+        }
+        else this.complete(url,1);
+        return true;
+    };
+    jpack.prototype._load_require=function(){//加载需要结束的依赖
+        if(this.require_loading)return true;
+        var that=this;this.require_loading=true;//告知正在运行
+        if(this._require_urls.length<1){
+            this.require_loading=false;
+            return true;
+        }
+        this._url_complete(this._require_urls[0],true,function(){//that.require_loading=false 因为只有这里才触发进行查询 其他_url_complete 不需要触发
+            that.require_loading=false;
+        });
+    }
+
+    jpack.prototype.del=function(urls){//删除url放弃加载
+        if(typeof urls=="array"){
+            for (var i = urls.length-1; i>-1; i--) {
+                this._del(urls[i]);
+            }
+        }
+        else if(typeof urls=="string")this._del(urls);
+    }
+    jpack.prototype._del=function(url){//删除url放弃加载
+        var l=this.urls.length;
+        for (var i = 0; i < l; i++) {
+            if(this.urls[i]==url){
+                this.urls.splice(i,1);
+                break;
+            }
+        };
+    }
+    jpack.prototype.complete=function(url,flag){//格式化url
+        var rflag=this.elems[url]=this.elems[url]||flag;//设置是否加载完成
+        this.loading=false;
+        //alert("loaded:"+url+"*"+flag);
+        this._url_complete(url,flag);//that.require_loading=false 不需要禁止 有依赖关系 自然会进入_load_require 方法
+        //this.load();
+    }
+
+    jpack.prototype._url_complete=function(url,flag,fn){//检查当前url是否完成 以及补足相关url
+        var that=this;
+        this._require_run(url,function(_url){//进行递归循环 依次完成依赖url加载 内部会执行load函数
+            that._require_compelet(_url,flag);//依赖关系结束
+            //alert("_plugins_compelet:"+_url);
+            that._plugins_compelet(_url,flag);//告知插件当前url已经完结 
+            //alert("_url_complete:"+_url);
+            fn&&fn(_url,flag);
+            that.load();
+        });
+        //insertBefore
+    }
+    jpack.prototype._require_run=function(url,fn){
+        var that=this;
+        var ref=this._ref[url];//已经加载过的url其本身ref 已经处理 不会产生死循环
+        if((!ref)||ref.urls.length<1){
+            if(ref)ref.complete=true;
+            fn&&fn(url);
+            return;
+        }
+        if(ref.loading)return;ref.loading=true;
+        var d=ref.urls[0];
+        ref.urls.splice(0,1);
+        //alert("_require_run:"+url);
+        if(typeof d=="function"){
+            d&&d();
+            ref.loading=false;that._require_run(url,fn);
+        }
+        else {
+            this._loadPlugins({
+                urls:d,
+                append:false,
+                fn:function(u,f){ref.loading=false;that._require_run(url,fn);},
+                efn:function(u,f,pc){return !f;},//return false 则清楚队列中 本插件所涵盖的url
+                use:null
+            });
+        }
+    }
+    jpack.prototype._plugins_compelet=function(url,flag){
+        for(var k in this.plugins){
+            var p=this.plugins[k];
+            if((!p)||p.complete){//如果已经加载完成 或对象不存在直接结束
+                delete this.plugins[k];//删除这个引入对象
+                continue;
+            }
+            var c=p.readyc||0;//完成记录数
+            var l=p.urls.length,has=false;
+            for(var i=0;i<l;i++){
+                if(p.urls[i]==url){
+                    has=true;
+                }
+            }
+            if(!has)continue;
+            c++;
+            var ef=p.efn&&p.efn(url,flag,p.urls.length?(c/p.urls.length):1);
+            if(ef===false)this.del(p.urls);//停止重复js 只删除第一个相同项
+            if(c>=p.urls.length||ef===false){//如果全部加载 或则终止 都触发全部加载完成
+                //存在use 告知对应的use 当前插件组 完成
+                //if(p.use)this._plugins_compelet(p.use);
+                p.fn&&p.fn(url,true,k);
+                delete this.plugins[k];//删除这个引入对象
+            }
+            else p.readyc=c;
+        }
+    }
+    jpack.prototype._require_compelet=function(url,flag){//当前url 内部关系处理结束 告知相关插件此url成功完结
+        this._require_urls=this.map(this._require_urls,function(u){//移除依赖
+            if(u==url)return null;
+            return u;
+        });
+        var ref=this._ref[url];
+        if(ref){
+            ref.complete=true;
+            var p;
+            while((p=ref.funcs.pop())){
+                //alert("require_compelet:"+url+":"+p);
+                p&&(typeof p=="function")&&p.call(this,this);
+            }
+        }
+    }
+    jpack.prototype.getParents=function(w){//获取父级win 
+        w=w||window;
+        var p=w.parent,ws=[];
+        while(p!=w&&p){
+            ws.push(p);
+            w=p;p=p.parent;
+        }
+        return ws;
+    }
+    jpack.prototype.random=function(l){
+        var r=[];
+        if(!l)l=32;
+        for(var i=0;i<l;i++){
+            r.push(this._chars[Math.ceil(Math.random()*35)]);
+        }
+        return r.join('');
+    }
+    jpack.prototype.map=function(a,fn){
+        if(!a)return [];
+        var r=[],l=a.length;
+        for(var i=0;i<l;i++){
+            var f=fn&&fn(a[i]);
+            if(f)r.push(f);
+        }
+        return r;
+    }
+    jpack.prototype.require=function(name,fn){//用于建立依赖关系 name 统一为字符型
+        return this._require(name,fn);
+    }
+    //此方法的fn 只有将
+    jpack.prototype.define=function(_url,_ref_url,fn){//用于建立依赖关系 name 必须是字符型
+        if(typeof _url=="function") this._require(_url);//指定当前加载url的依赖关系
+        else this._require(_ref_url,_url,fn);
+    }
+    jpack.prototype._get_require_url=function(url){//获取当前执行依赖url
+        if(this._require_urls.length<1){
+            this._require_urls.push((this.random(8)+""+new Date().getTime()));
+        }
+        if(url&&typeof url=="string"&&url!=this._require_urls[0])this._require_urls.unshift(url);
+        return this._require_urls[0];
+    }
+    jpack.prototype._require=function(_ref_url,_url,fn){//_ref_url依赖url _url 表示被依赖值
+        var rurl=this._get_require_url(_url);//获取当年执行依赖url
+        var ref=this._ref[rurl];//当前对象 加载需要引用对象保存
+        if(!ref)ref=this._ref[rurl]={urls:[],funcs:[]};
+        if(typeof _ref_url=="string"){
+            ref.urls=this._get_urls(_ref_url,ref.urls);
+        }
+        else if(typeof _ref_url=="function")ref.funcs.push(_ref_url);
+        if(typeof _url=="function")ref.funcs.push(_url);
+        fn&&ref.funcs.push(fn);
+        //alert("require_add:"+_url+":"+_ref_url);
+        if(ref.complete){//已经加载完成
+            this._require_compelet(rurl,true);
+        }
+        this.loadStart();//开始加载
+        //this._url_complete(typeof _url=="string"?_url:null);
+    }
+    jpack.prototype.use=function(name,fn){//使用某一js功能 name 统一为字符型 暂不扩展数组
+        return this._use(name,fn);
+    }
+    jpack.prototype._get_urls=function(name,turls){//返回数组格式
+        //对name值做解析 将后面的值全部带入 var reg = new RegExp("([^?=&.]+=[^?=&.]*)", "gi"); var r = name.match(reg); r.join('&')
+        var __format_urls=function(str,sp){
+            if(typeof str=="string")return [str+((sp!="")?((str.indexOf('?')>-1?"&":"?")+sp):"")];
+            else if(typeof str=="object"){
+                var l=str.length;
+                for(var i=0;i<l;i++)str[i]=str[i]+((sp!="")?((str[i].indexOf('?')>-1?"&":"?")+sp):"");
+                return str;
+            }
+            return [];
+        }
+        var _i=name.indexOf('?');var strp=_i>-1?name.substr(_i):"?";
+        var sname=name.replace(strp,"");strp=strp.substr(1);
+        if(!turls)turls=[];
+        var urls=this._config.plugins[sname];
+        if(!urls)turls.push([name]);
+        else if(typeof urls=="string"||urls instanceof Array)turls.push(__format_urls(urls,strp));
+        else{
+            for(var k in urls){
+                turls.push(__format_urls(urls[k],strp));
+            }
+        }
+        return turls;
+    }
+    jpack.prototype._use=function(name,fn){//name 必须为字符串
+        var that=this;if(typeof name!="string"){alert('use must have string params!');return;};
+        var ub=this._o_use[name];
+        if(!ub){
+            ub=this._o_use[name]=new jfunc(name,{fn:fn,key:"__use_"+name});
+        }
+        this.define(ub.key,name,fn);
+        return ub;
+    }
+    jpack.prototype.config=function(options){
+        this._config=this.extend(this._config,options);
+    }
+    var JLB=window[J_NAME];
+    if(!JLB)window[J_NAME]=JLB=new jpack();
+
+    function jfunc(name,data){//一个空方法
+        this._trigger={}
+        this._data=data||{};
+        this.key=this._data.key||"_use";
+        this._name=name;
+    }
+    jfunc.prototype.trigger=function(fname,fvalue){//用于use 相关name值后。。最终对于某个实现j.fn.[name] 进行的调用
+        this._trigger[fname]=fvalue||[];
+        return this;
+    }
+    jfunc.prototype.run=function(){
+        this._data.fn&&this._data.fn();
+        var obj=J.fn[this._name];if(!obj)return this;
+        for(var k in this._trigger){
+            obj[k]&&obj[k].apply(J,this._trigger[k]);
+            delete this._trigger[k];
+        }
+        return this;
+    }
+    var core={};
+    function __core(){
+        this._plugid=this.options.core+Math.round(Math.random()*100000);
+    }
+    __core.prototype.trigger=function(name,argv){
+        var opt=this.options;
+        //arguments
+        return opt.trigger&&opt.trigger[name]&&opt.trigger[name].apply(this,argv||[]);
+    }
+    __core.prototype.options=core.__defaults = {core:"data-plug-core"};
+    core.constructor=__core;
+    JLB.fn.core=core;
+
+})(window);
+//循环 进行计算
+
+//注册方法
+(function(){
+var _b_path=J.SCRIPTPATH;
+var _p_bath=_b_path+"/plugins";
+var jlb=J;
+J.config({
+    path:_b_path,
+    plugins:{//可配置多个地址
+        "jquery":[_b_path+"/jquery-1.8.3.min.js"],
+        "jquery1.8":[_b_path+"/jquery-1.8.3.min.js"],
+        "tmp":[_p_bath+"/tmp/jquery.tmpl.js"],
+        "resource":[_p_bath+"/resource/j.resource.js"],
+        "dialog":[_p_bath+"/dialog/j.dialog_config.js"],
+        "basic":[_p_bath+"/basic/j.basic.js"],
+        "docs":[_p_bath+"/docs/j.docs.js"],
+        "form":[_p_bath+"/form/jquery.formbasic_v2.js"],
+        "my97date":{"js":[_b_path+"/ext/My97DatePicker/WdatePicker.js"],css:[_b_path+"/ext/My97DatePicker/skin/default/datepicker.css"]},
+        "pager":[_p_bath+"/form/j.pager.js"],
+        "test1":[_p_bath+"/j.test1.js"]
+    }
+});
+})(window);

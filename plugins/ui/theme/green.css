@@ -1,0 +1,100 @@
+.grid{}
+.grid table { 
+border-collapse:collapse; 
+border-spacing:0; 
+width:100%;
+margin-bottom:-1px;
+border:1px solid #C4D6E6;
+}
+.grid th{
+	text-align:center;
+	color:#333;
+	font-weight:700;
+	background: #FFF;
+	height:28px;
+	font-weight:700;
+	border:1px solid #B3E1D7;
+	background:url(green/table-hd-re.png) repeat-x;
+}
+.grid td{
+	height:20px;
+	line-height:20px;
+	text-align:center;
+	background-color:#F9F9F9;
+	border:1px solid #DDD;
+	overflow: hidden;
+}
+.grid .even td{background-color:#FFF;}
+.grid .hover td{color:#960;background-color:#FFE9D0;}
+
+.grid .cell{margin: 0;padding:2px 4px;}
+.grid .even .cell{}
+.grid .hover .cell{}
+
+.grid a{
+	color:#008060;
+}
+.grid a:hover{
+	color:#F60;
+	text-decoration:underline;
+}
+
+.grid .error{
+	height: 30px;font-weight: bolder;font-size: 14px;padding: 5px;
+}
+.pager-default{
+	overflow:hidden;
+	height:22px;
+	padding:10px 0;
+	border:1px solid #BDD7D1;
+	background:url(green/flip-bg.png) repeat-x;
+}
+.pager-default .pager p{
+	float:right;
+	padding-right:12px;
+}
+.pager-default .pager a{
+	float:left;
+	height:20px;
+	line-height:20px;
+	color:#008060;
+	cursor:pointer;
+	margin:0 2px;
+	padding:0 6px;
+	border:1px solid #AFBFCF;
+	background:url(green/flip.png) repeat-x;
+}
+.pager-default .pager a.on, .pager-default .pager a:hover{
+	color:#FFF;
+	text-decoration:none;
+	border-color:#008060;
+	background-position:0 -20px;
+}
+.pager-default .pager span{
+	float:left;
+	line-height:22px;
+	color:#999;
+}
+.pager-default .pager .info{
+	float:left;
+	line-height:22px;
+	padding-left:12px;
+}
+.pager-default .pager .info b{
+	color:#008060;
+	font-weight:normal;
+	padding:0 2px;
+}
+.pager-default .pager .gray,.pager-default .pager .gray:hover{
+	color:#008060;
+	cursor:default;
+	border:1px solid #AFBFCF;
+	background:url(green/flip.png) repeat-x;
+}
+.pager-default .pager select{
+	float:left;
+	height:22px;
+	color:#404040;
+	font-family:Tahoma;
+	border:1px solid #CCC;
+}

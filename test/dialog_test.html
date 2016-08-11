@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+</style>
+</head>
+<body style="width:400px;height:400px;">
+测试文档1<a href="javascript:void(0);" onclick="_close();">关闭窗体</a>
+
+
+<script type="text/javascript">
+
+	var _pw,_pfunc;
+	function _ready(pw,pfunc){//需要被调用父级页面调用
+		_pw=pw;
+		_pfunc=pfunc;
+	}
+
+	function _close (argument) {
+		//关闭有 两种办法 一种 直接用window.parent 找到父级window 对象 然后调用J.fn.dialog.close();
+		//或则在ready方法中 记录 父级传过来的对象
+		//然后 _pw&&_pw.J.fn.dialog.close();
+
+		//第2中 调用父级床底的pfunc
+		_pfunc&&_pfunc();
+	}
+
+</script>
+</body>
+</html>

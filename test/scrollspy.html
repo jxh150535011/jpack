@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<script type="text/javascript" src="../j.js"></script>
+
+<style type="text/css">
+
+.blue{background-color: blue;}
+.green{background-color: green;}
+.red{background-color: red;}
+.gray{background-color: gray;}
+</style>
+</head>
+<body>
+<div data-code="example1">
+
+<div data-code-source="html" style="height:450px;">
+
+
+<span class="nav"><a href="#d1">段落1</a><a href="#d2">段落2</a><a href="#d3">段落3</a><a href="#d4">段落4</a><a href="#d5">段落5</a><a href="#d6">段落6</a><a href="#d7">段落7</a></span>
+<div id="test1" data-target=".nav"  style="width:500px;height:400px;overflow:auto;">
+<div id="d1"  class="blue"></div>
+<div id="d2"  class="green"></div>
+<div id="d3"  class="red"></div>
+<div id="d4"  class="gray"></div>
+<div id="d5"  class="blue"></div>
+<div id="d6"  class="red"></div>
+<div id="d7"  class="green"></div>
+</div>
+
+
+<div id="test2" style="">
+	<div style="width:300px;height:30px;position: fixed;top:0px;"><a href="#t2d1">段落1</a><a href="#t2d2">段落2</a><a href="#t2d3">段落2</a></div>
+	<div id="t2d1"  style="height:500px" class="blue"></div>
+	<div id="t2d2"  style="height:500px" class="green"></div>
+	<div id="t2d3"  style="height:500px" class="gray"></div>
+</div>
+
+<div id="test3" style="">
+	<div style="width:300px;height:30px;position: fixed;top:60px;left:0px;"><a href="#t3d1">段落1</a><a href="#t3d2">段落2</a><a href="#t3d3">段落2</a></div>
+	<div id="t3d1"  style="height:500px" class="blue"></div>
+	<div id="t3d2"  style="height:500px" class="green"></div>
+	<div id="t3d3"  style="height:500px" class="gray"></div>
+</div>
+
+</div>
+
+html:
+<pre data-code-print='html' class="prettyprint lang-html" style="">
+</pre>
+js:
+<pre data-code-print='js' class="prettyprint" style="">
+</pre>
+<script type="text/javascript" data-code-source="js">
+J.require("jquery");
+J.require("scrollspy");
+J.ready(function(){
+	$("#test1").scrollspy({
+		onchange:function(id,hrefs,targets){
+			hrefs.css({"color":"gray"});
+			hrefs.filter("[href='#"+id+"']").css({"color":"red"});;
+		}
+	});
+
+	$("#test2").find("a").click(function (argument) {
+		$("#test2").scrollspy("to",$(this).attr("href").replace('#',''));
+	});
+
+	$("#test2").scrollspy({
+		onchange:function(id,hrefs,targets){
+			hrefs.css({"color":"gray"});
+			hrefs.filter("[href='#"+id+"']").css({"color":"red"});;
+		}
+	});
+	$("#test3").scrollspy({
+		onchange:function(id,hrefs,targets){
+			hrefs.css({"color":"gray"});
+			hrefs.filter("[href='#"+id+"']").css({"color":"red"});;
+		}
+	});
+});
+</script>
+
+
+</div>
+</body>
+</html>

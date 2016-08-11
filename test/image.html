@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../j.js"></script>
+<script type="text/javascript" src="pretty.js"></script>
+<style type="text/css">
+.red{background: red;}
+.blue{background: blue;}
+.yellow{background: yellow;}
+.gray{background: gray;}
+.green{background: green;}
+.black{background: black;}
+</style>
+</head>
+<body>
+<div data-code="example1">
+	<p>
+	cliptype 有 filler cut auto 三种模式 compress:压缩(默认true)  stretch:拉伸(默认false) <br/>
+	必须设置 cliptype 的作用在压缩 或 拉伸后，对于长宽比不一致的情况，到底要达到什么效果。<br/>
+	标准情况：宽高比(width/height) 小于 1/50(这个值是可改的)，采用宽度为准 则执行cut操作 即剪裁最终结果集<br/>
+	小于1 以高度为准 执行filler 最终的结果是补白<br/>
+	小与50 以宽度为准 执行cut<br/>
+	大与50 以高度为准<br/>
+	当设置了 cliptype 则根据提供的处理 否则 传入"auto" 自动<br/>
+	 </p>
+	<h1>image:图片加载</h1>
+	<h3>例子1：几种加载图片方式(具体可以参考上面注释多组合即可)</h3>
+<div>
+
+<div  data-code-source="html">
+<a href="javascript:load1();">默认加载</a>&nbsp;
+<a href="javascript:load2();">宽高200-200(auto)</a>&nbsp;
+<a href="javascript:load3();">宽高200-200(auto不压缩)</a>&nbsp;
+<a href="javascript:load4();">宽高1000-1000(auto拉伸)</a>&nbsp;
+<!-- 这是一个容器 当然也可以image标签 默认会取这个属性的src width height  -->
+<div id="image1"></div>
+
+</div>
+html:
+<pre data-code-print='html' class="prettyprint lang-html" style="">
+</pre>
+js:
+<pre data-code-print='js' class="prettyprint" style="">
+</pre>
+</div>
+
+<script type="text/javascript" data-code-source="js">
+J.require("jquery");
+J.require("image");
+J.ready(function (argument) {
+	load1();
+});
+
+function getImage(){//返回一个全新的对象 ，防止内部的配置属性被记录
+	return $("#image1").empty().append("<div></div>").children(0)
+	.attr("src","http://jpack.sinaapp.com/test/image1.jpg");//赋上默认值
+}
+
+function load1(){
+	getImage().image({},"show");
+}
+function load2(){
+	getImage().image({width:200,height:200,cliptype:"auto"},"show");
+}
+function load3(){
+	//不压缩
+	getImage().image({width:200,height:200,cliptype:"auto",compress:false},"show");
+}
+function load4(){
+	//compress 效果失效 因为 要求现实很大 设置了没用
+	getImage().image({width:1000,height:1000,cliptype:"auto",compress:true,stretch:true},"show");
+}
+</script>
+</div>
+
+</body>
+</html>

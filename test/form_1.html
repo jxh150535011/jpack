@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../j.js"></script>
+<style type="text/css">
+
+</style>
+</head>
+<body>
+<form id="form1">
+	<input type="submit" />
+</form>
+
+
+<a href="javascript:_submit();">提交</a>
+
+
+<script type="text/javascript">
+J.require("jquery");
+J.ready(function(){
+	$("#txt1").on("click",function (argument) {
+		alert("绑定步骤！");
+	});
+	$("#txt1").off(".test").on("keydown.test",function (argument) {
+		var fns=this.click;
+        var that = $(this);
+        if (that.pass) {
+            that.pass = false;
+            return true;
+        }
+        that.pass = true;
+        alert("点击触发");
+        setTimeout(function () {
+            that.click();
+        }, 1000);
+        return false;
+	});
+
+    document.getElementById('form1').onsumit=function(){
+        alert(2);
+    }
+});
+function _submit(){
+    document.getElementById('form1').submit();
+}
+function  _t1 (argument) {
+	alert("t1提交步骤");
+}
+</script>
+</body>
+</html>

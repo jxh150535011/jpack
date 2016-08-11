@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../j.js"></script>
+<style type="text/css">
+</style>
+</head>
+<body>
+<div>
+	<h1>about:脚本框架</h1>
+	<p>
+		<h3>主要是集成了一些常用方法，对js起管理作用为目的,以下是相关注意事项</h3>
+		<div>
+			<ul>
+				<li>1,J.require:主要用于引入依赖脚本,其值 可是绝对路径 相对路径 或则 已经在j.config.js定义好的字符串</li>
+				<li>2,使用J.require的路径为项目下根目录的时候，最好在其之前执行J.main方法</li>
+				<li>
+					J.main();<br/>
+					J.require("jquery");<br/>
+					J.require("/js/**.js");//如果之前没有执行J.main();方法 可能会导致相对路径错误<br/>
+					J.require("http://www.**.com/js/**.js");<br/>
+				</li>
+			</ul>
+		</div>
+	</p>
+</div>
+<br/>
+</body>
+</html>

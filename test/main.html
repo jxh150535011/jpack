@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../j.js"></script>
+<style type="text/css">
+</style>
+</head>
+<body>
+<div>
+	<h1>有关js脚本的例子</h1>
+	<p>
+		<h3>1,相关方法 文件j.js</h3>
+		<p>说明：当前js 里面有一个方法为pack 其中为处理依赖关系 常用方法 基础结构创建 提供了支持。以下jpack属性方法 可以通过J.方式直接调用。</p>
+		
+		<div>
+			<ul>
+				<li>1,Function.prototype.extend 当前方法 实现了 方法的继承</li>
+				<li>2,jpack.prototype.__extend 自定义继承方法 在插件编写的时候使用</li>
+				<li>3,jpack.prototype.extend 类似jquery extend，在没有引入jquery的时候也能使用此方法 </li>
+				<li>4,jpack.prototype.getPath 取某一个当前页面引入文件的 前缀路径 </li>
+				<li>5,jpack.prototype.getBasicPath 取当前网站的根目录，如果当前js文件属于跨域引入，最好在此之前执行J.main方法用于矫正。 </li>
+				<li>6,jpack.prototype.main 在跨域调用js时候，先执行main方法 以正确获取虚拟目录 否则可能导致虚拟目录缺失，主要影响 getBasicPath路径方法 </li>
+				<li>7,jpack.prototype.getParam(name,src) 获取某个引入文件 附带的参数。name 为获取目标名 src 为路径名 </li>
+				<li>8,jpack.prototype.getQueryString(name,un) 获取url参数。name 为获取目标名 un 是否解码 </li>
+				<li>9,jpack.prototype.setQueryString(url, key, value,del) 给某一个url附加上参数 key为目标名 value 为值 del为true的情况下 value为空 则会清除url上的对应key项 </li>
+				<li>10,jpack.prototype.setCookie(name,value,expires,path,domain) 设置cookie name 名，value值,expires 为时间 单位分 path 路径,domain 域名。后两个可不传 </li>
+				<li>11,jpack.prototype.getCookie(name) 获取cookie name 名 </li>
+				<li>12,jpack.prototype.toStr(object) 将一个对象以字符型输出,可用于将json对象解析 </li>
+				<li>13,jpack.prototype.loadScript(url,charset,fn) url 需要引入的js文件,charset 编码 可不传,fn为 回调函数（参数 {flag:true|false}） </li>
+				<li>14,jpack.prototype.loadElems,jpack.prototype.loadStyle,jpack.prototype.loadHtml 跟  loadScript类似 loadElems自动会判断文件类型,loadStyle引入css文件 loadHtml可引入html文件(但是不能跨域使用)</li>
+				<li>15,jpack.prototype.loadPlugins(urls,fn,efn) 插件对象 可引入一组js文件。urls为数组列表，fn 全部完成 efn 每个循环 return false 终止加载</li>
+				<li>16,jpack.prototype.getParents() 获取到当前文档的父级列表 数组形式返回</li>
+				<li>17,jpack.prototype.random(l) 产生随机数 l为 随机数长度</li>
+				<li>18,jpack.prototype.map(a,fn) 类似jquery的map方法 </li>
+				<li>19,jpack.prototype.require(name,fn) 依赖关系处理类 后面解释 </li>
+				<li>20,jpack.prototype.define(_url,_ref_url,fn) 依赖关系处理类 后面解释 </li>
+				<li>21,jpack.prototype.ready(fn) 页面文档加载完成 并且当前jpack js 可以正常运行，引入默认的配置文件。 </li>
+				<li>22,J.fn.core 所有插件的基类，如果只是单纯的实现某个具体方式 可不用引入，直接使用jquery 生成插件。 </li>
+				<li>23,j.config.js 对于引入插件的配置文件 加载成功后 并且 文档成功加载 会调用 ready的方法。 </li>
+			</ul>
+		</div>
+		<h3>2,依赖关系</h3>
+		<p>说明：依赖关系 可以为js插件之间构成了 服务关系</p>
+		<div>
+			<ul>
+				<li>1,jpack.prototype.require(name,fn) 指定依赖js,name 为目标js 路径名 也可以 定义好的插件名,fn回调函数。当对应插件组 加载完成后会回调。</li>
+				<li>2,jpack.prototype.define(_url,_ref_url,fn) 当定义的插件组 全部加载后 将会触发fn,_url 加载js _ref_url为依赖js,fn加载完成回调方法</li>
+
+				<li>3,使用方法：<br/>
+				
+				//当前为A.js<br/>
+				J.require("jquery");<br/>
+				J.require("/js/**.js",function(){<br/>
+					alert(1);<br/>
+				});<br/>
+				J.require("http://www.**.com/js/**.js",function(){<br/>
+					alert(2);<br/>
+				});<br/>
+
+				J.define(function(){<br/>
+					alert(3);<br/>
+				});<br/>
+
+				//当前为B.js<br/>
+				J.require("/**/A.js",function(){<br/>
+					alert(4);<br/>
+				});<br/>
+				J.define(function(){<br/>
+					alert(5);<br/>
+				});<br/>
+				alert(0);<br/>
+
+				</li>
+			</ul>
+		</div>
+		<h3>3,组件的创建</h3>
+		<p>说明：构建一个基本的组件</p>
+		<div>
+			<ul>
+				<li>
+				//[****]具体名字<br/>
+				var __func=function () {<br/>
+					/*常用的jquery初始化方法*/<br/>
+					$.fn.__init=function($object,option,cmd,params){<br/>
+						var _defaults=$object.defaults;<br/>
+						return this.each(function () {<br/>
+						var $this = $(this), data = $this.data(_defaults.core), options;<br/>
+
+						options= $.extend({}, data?data.options:_defaults, typeof option == 'object'?option:{});<br/>
+						if (!data) $this.data(_defaults.core, (data = new $object.constructor(this, options)));<br/>
+						else data.options=options;<br/>
+
+						if(typeof option =='string'&&data[option])data[option].apply(data,cmd||[]);<br/>
+						else if(typeof cmd =='string'&&data[cmd])data[cmd].apply(data,params||[]);<br/>
+						});<br/>
+					};<br/>
+
+					var [****]={};//定义基本容器<br/>
+					input.defaults = {core:"data-plug-****",**,<br/>
+					,trigger:{ready:null}//事件集合<br/>
+					}<br/>
+					function __[****](element,options){<br/>
+						__[****].base.constructor.call(this);<br/>
+						this.options=options;<br/>
+						this.$elem = $(element);<br/>
+						this.init();<br/>
+					}<br/>
+					[****].constructor=__[****];<br/>
+					J.__extend(J.fn.core,[****]);<br/>
+
+					__[****].prototype.init=function(){<br/>
+						var that=this,opt=this.options;<br/>
+						that.event();<br/>
+					}<br/>
+					__[****].prototype.event=function(){<br/>
+						var that=this,opt=this.options;<br/>
+					}<br/>
+					$.fn.[****] = function (option) {<br/>
+					  return this.__init(input,option);<br/>
+					};<br/>
+					$.fn.[****].Constructor = __[****];<br/>
+					J.fn.[****]=[****];<br/>
+				});<br/>
+				if(!window["jQuery"]){//检查是否引入jquery<br/>
+					J.require("jquery");<br/>
+					J.define(__func);<br/>
+				}<br/>
+				else __func();//没有则直接运行<br/>
+				</li>
+			</ul>
+		</div>
+	</p>
+</div>
+<br/>
+<script type="text/javascript">
+J.require("dialog?style=green");
+J.ready(function(){
+	
+});
+function open1(){
+	J.fn.dialog.jopen({"content":"iframe:form.html",maximizeBox:true,width:800,height:500,title:"百度",backdrop:true});
+}
+</script>
+</body>
+</html>

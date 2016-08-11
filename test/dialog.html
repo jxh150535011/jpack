@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../j.js"></script>
+<script type="text/javascript" src="pretty.js"></script>
+<style type="text/css">
+</style>
+</head>
+<body>
+<div data-code="example1">
+	<h1>dialog:弹窗</h1>
+<div>
+<div data-code-source="html">
+<a href="javascript:open1();">普通弹窗</a>&nbsp;
+<a href="javascript:open2();">先弹后加载</a>&nbsp;
+<a href="javascript:open3();">固定大小弹窗</a>&nbsp;
+<a href="javascript:open4();">可放大缩小</a>&nbsp;
+<a href="javascript:open5();">可拖拽的</a>&nbsp;
+<a href="javascript:open6();">无头无底</a>&nbsp;
+<a href="javascript:open7();">自定义按钮</a>&nbsp;
+<a href="javascript:open8();">事件</a>&nbsp;
+<a href="javascript:open9();">url方式加载内容</a>&nbsp;
+<a href="javascript:open10();">html方式加载内容</a>&nbsp;
+<a href="javascript:open11();">自适应宽度</a>&nbsp;
+<a href="javascript:open12();">自适应宽度2</a>&nbsp;
+<a href="javascript:open13();">对象加载方式</a>&nbsp;
+<a href="javascript:open14();">完全自定义弹窗</a>&nbsp;
+</div>
+html:
+<pre data-code-print='html' class="prettyprint lang-html" style="">
+</pre>
+js:
+<pre data-code-print='js' class="prettyprint" style="">
+</pre>
+</div>
+
+<script type="text/javascript" data-code-source="js">
+J.require("dialog?style=green");
+J.ready(function(){
+	
+});
+function open1(){
+	J.fn.dialog.jopen({"content":"iframe:http://www.baidu.com",width:800,height:500,title:"百度",backdrop:true});
+}
+function open2(){
+	// wait false 表示是否进行loading等待
+	J.fn.dialog.jopen({"content":"iframe:http://www.baidu.com",wait:false,width:800,height:500,title:"百度",backdrop:true});
+}
+function open3(){
+	J.fn.dialog.jopen({"content":"iframe:http://www.baidu.com",wait:false,width:800,height:500,title:"百度",backdrop:true});
+}
+function open4(){
+	J.fn.dialog.jopen({"content":"iframe:http://www.baidu.com",wait:false,maximizeBox:true,width:800,height:500,title:"百度",backdrop:true});
+}
+function open5(){
+	J.fn.dialog.jopen({"content":"iframe:http://www.baidu.com",wait:false,move:true,width:800,height:500,title:"百度",backdrop:true});
+}
+function open6(){
+	J.fn.dialog.jopen({"content":"iframe:http://www.baidu.com",wait:false,footer:false,header:false,width:800,height:500,title:"百度",backdrop:true});
+}
+function open7(){
+	J.fn.dialog.jopen({"content":"iframe:http://www.baidu.com",wait:false,move:true,width:800,height:500,title:"百度",backdrop:true
+		,buttons:{
+			"ok":{show:true,text:"提交1",click:function(w){
+				//如果是iframe方式打开 并且是同域 可获得目标window对象	
+			}},
+			"cancel":{show:true,text:"取消1",click:function(w){
+				
+			}}
+		}
+	});
+}
+function open8(){
+	J.fn.dialog.jopen({"content":"iframe:dialog_test.html",wait:false,move:true,width:800,height:500,title:"百度",backdrop:true
+		,trigger:{
+			"ready":function(w){//加载完毕
+				//如果是iframe方式打开 并且是同域 w 可获得目标window对象
+				alert("ready");
+				w._ready&&w._ready(window,function(){//测试例子 调用 关闭
+					J.fn.dialog.close();
+				});
+			},
+			"change":function(){
+				alert("change");
+			},
+			"open":function(){
+				alert("open");
+			},
+			"close":function(){
+				alert("close");
+			},
+			"restore":function(){
+				alert("restore");
+			},
+			"restore":function(){//还原 用于将目标弹出内容 还原到原先的位置，而并非直接remove 具体调用方法restore
+				alert("restore");
+			},
+			"berforerestore":function(){//还原之前事件
+				alert("berforerestore");
+			}
+		}
+	});
+}
+function open9(){
+	J.fn.dialog.jopen({"content":"url:dialog_test1.html",width:800,height:500,backdrop:true});
+}
+function open10(){
+	J.fn.dialog.jopen({"content":"html:<div>一段测试文本被加入</div>",width:800,height:500,backdrop:true});
+}
+function open11(){
+	J.fn.dialog.jopen({"content":"url:dialog_test1.html",width:"fwidth-50",height:"fheight-50",backdrop:true});
+}
+function open12(){
+	J.fn.dialog.jopen({"content":"iframe:dialog_test.html",width:"auto",height:"auto",backdrop:true});
+}
+function open13(){
+	var box=$("<div style='width:300px;height:60px;'>这是一个对象</div>");
+	J.fn.dialog.jopen({"content":box,width:"auto",height:"auto",backdrop:true});
+}
+function open14(){
+	var temp="",option={};//首先定义html模板
+	//里面一些特殊 属性 要定义
+	//data-plug-dialog="move" 可拖拽位置  data-plug-dialog="title" 标题位置
+	//data-plug-dialog="close" 关闭位置 data-plug-dialog="maximize"最大化位置
+	//data-plug-dialog="body" 主体内容 区域
+	temp="<div>";
+	temp+='<div style="height:30px;background:gray;" data-plug-dialog="move"><span data-plug-dialog="title" class="title" ></span>头部';
+	temp+='<a href="javascript:void(0);" title="关闭" data-plug-dialog="close" >关闭</a></div>';
+	temp+='<div data-plug-dialog="body" style="background:#ffffff;"></div>';//主体位置
+	temp+='<div style="height:50px;background:gray;">底部</div>';
+	temp+="</div>";
+	option.padding=[30,0,50,0];//主体内容 于周边 边距 上 右 下 左
+	option.move=true;
+	option.waitTemp="<div class='dialog-loading'><div>&nbsp;Loading...</div></div>";//加载等待 模板
+	option.contentTemp=temp;
+
+	option.content="iframe:dialog_test.html";
+	option.width="600";
+	option.height="400";
+	J.fn.dialog.open(option);
+}
+</script>
+</div>
+
+</body>
+
+
+
+</script>
+</body>
+</html>
